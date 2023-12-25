@@ -4,8 +4,6 @@
 <details>
   <summary>Netdiscover </summary>
 
-## Netdiscover
-
 * Scan Entire Network for ALive host using ARP
 ```console
 netdiscover -i eth0
@@ -17,40 +15,21 @@ netdiscover -r x.x.x.1/24
 <details>
   <summary>Nmap </summary>
 
-## Nmap
-
 * To scan the live Host
 ```console
 nmap -sP x.x.x.0/24 -iL ip.txt                
-nmap -sn x.x.x.0/24 -iL ips.txt   { No of hosts up}
-```
-* To find the Specific open port
-```console
-nmap -p port x.x.x.1/24 --open
-```
-* To find the OS
-```console
-nmap -O x.x.x.x 
-```
-* Comprehensive Scan
-```console
-nmap -Pn -A x.x.x.1/24 -vv --open
-```
-Check RDP enabled after getting ip
-```console
-nmap -p 3389 -iL ip.txt | grep open (ip.txt contains all the alive hosts from target subnet)
-```
-Check MySQL service running
-```console
-nmap -p 3306 -iL ip.txt | grep open (ip.txt contains all the alive hosts from target subnet)
+nmap -sn x.x.x.0/24 -iL ips.txt {No of hosts up}
+nmap -p port x.x.x.1/24 --open  {find the Specific open port}
+nmap -O x.x.x.x                 {To find the OS} 
+nmap -Pn -A x.x.x.1/24 -vv --open {Comprehensive Scan}
+nmap -p 3389 -iL ip.txt | grep open (Check RDP enabled after getting ip)
+nmap -p 3306 -iL ip.txt | grep open (Check MySQL service running)
 ```
 </details> 
 
 # Android Hacking
 <details>
   <summary>ADB</summary>
-
-## ADB
 
 * To Install ADB
 ```console
@@ -85,8 +64,6 @@ adb pull sdcard/log.txt /home/mmurphy/Desktop
   <details>
     <summary>OpenStego</summary>
 
-### OpenStego
-
 * To hide the Text in image
 
 ```console
@@ -105,8 +82,6 @@ Output -> Desktop/NewTextDocument.txt
 
 <details>
     <summary>Keywords</summary>
-
-## Keywords
 
 * Img hidden      - Openstego
 * .hex            - Cryptool
@@ -281,16 +256,17 @@ filter: mqtt
 <summary>malware analysis</summary>
 
 * Static malware analysis using hybrid
-   https://www.hybrid-analysis.com -> upload virus and analyse
-----
-* Strings search using BinText
 
+   https://www.hybrid-analysis.com -> upload virus and analyse
+
+* Strings search using BinText
+ 
 [WS11]
     
 Run bintext.exe ->String searching tool
 select Advance view
 select "malacious.exe" from shared drive
----
+
 
 * Identify packaging and obfuscation methods using PEid
 
@@ -299,7 +275,7 @@ select "malacious.exe" from shared drive
 Launch PEiD.exe
 Open virus file
 click Open, PEiD analyzes the file and provides information
----
+
 
 * Analyze ELF executable file using Detect It Easy (DIE)
 
@@ -311,7 +287,7 @@ Launch die.exe
 Open ELF Test File
 File info/Hash/Entropy and other details
 
----
+
 * Portable executable (PE) information of a malware executable file using PE Explorer
 
 Launch PE.Explorer_setup.exe
@@ -319,14 +295,14 @@ Open virus.exe
 On top
 Data Directories ->to view and edit the virtual address and size of the chosen directory describing provisions of parts of the code.
 Section Headers->
----
+
 
 * File dependencies using Dependency Walker
 
 Launch depends.exe
 open file.exe
 Observer Import and Export section.
-----
+
 
 * Malware disassembly using IDA
 
@@ -343,7 +319,7 @@ View -> Graphs -> Function calls
 HexView-1tab -> view hex value of the malicious file
 Structure
 Enums
----
+
 * Malware disassembly using OllyDbg
 
 Launch OLLYDBG.EXE
@@ -357,7 +333,7 @@ Log data appears ->displays the program entry point and its calls to known funct
 View->Executable modules
 View->Memory
 View->Thread
------
+
 
 * Malware disassembly using Ghidra
 
