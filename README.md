@@ -368,6 +368,44 @@ Program Tree->Headers double click
 
 </details>
 
+#Web server hacking
+<details>
+	<summary>using Nmap Scripting Engine (NSE)</summary>
+	
+	```console
+	[linux]
+	nmap -sV --script=http-enum [target]
+	 
+	To discover the hostnames that resolve the targeted domain.
+	nmap --script hostmap-bfk -script-args hostmap-bfk.prefix=hostmap- [target]
+
+	Perform HTTP trace on the targeted domain
+	nmap --script http-trace -d [target]
+	This script will detect a vulnerable server that uses the TRACE method by sending an HTTP TRACE request that shows if the method is enabled or not.
+
+	check whether Web Application Firewall is configured on the target host or domain
+	nmap -p80 --script http-waf-detect [Target]
+	determine whether a web server is being monitored by an IPS, IDS, or WAF.
+	This command will probe the target host with malicious payloads and detect the changes in the response code
+        ```
+	<summary>Linux </summary>
+ 	sudo su
+	
+	uniscan -h
+	uniscan -u [target-url] -q
+	-q -> to search for the directories of the web server.
+	
+	uniscan -u [target-url] -we
+	Here -w and -e are used together to enable the file check (robots.txt and sitemap.xml file).
+	
+	uniscan -u [target-url] -d
+	to start a dynamic scan on the web server.
+	obtaining more information about email-IDs, Source code disclosures, and external hosts, web backdoors, dynamic tests.
+	
+	File system ->
+	usr --> share --> uniscan --> report.
+ 
+</details>
 
 #Reference
 * Analyze IOT device
