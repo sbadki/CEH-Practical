@@ -91,7 +91,7 @@ run vnc
 	try to login -> u wont be able to but try with modified pwd, u should be able to login to machine
 
   ```
-/details>
+</details>
 
 <details>
 	<summary>Maintain persistence by abusing boot/logon autostart execution</summary>
