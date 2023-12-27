@@ -17,14 +17,25 @@ netdiscover -r x.x.x.1/24
 
 * To scan the live Host
 ```console
-nmap -sP x.x.x.0/24 -iL ip.txt                
-nmap -sn x.x.x.0/24 -iL ips.txt {No of hosts up}
+
+nmap -sP x.x.x.0/24        	{Live host}
+nmap -PR -sn x.x.x.0/24        	{Live host without port scan - ARP scan}
+nmap -sC -sV x.x.x.0/24        	{Script + version}    
+nmap -O x.x.x.x                 {To find the OS}
+nmap -p- x.x.x.1/24        	{open port}
 nmap -p port x.x.x.1/24 --open  {find the Specific open port}
-nmap -O x.x.x.x                 {To find the OS} 
+nmap -T4 -A -v www.moviescope.com/x.x.x.10/24  {Aggressive scan}
+nmap --script <script_name> -p <port> x.x.x.0/24 {using nse script}
+nmap -sC -sV -p- -A -v -T4 x.x.x.0/24 {script+version+ports+os scan}
+nmap -T4 -A -v -oN ouput.txt x.x.x.0/24  {Normal output in a file}
+
 nmap -Pn -A x.x.x.1/24 -vv --open {Comprehensive Scan}
 nmap -p 3389 -iL ip.txt | grep open (Check RDP enabled after getting ip)
 nmap -p 3306 -iL ip.txt | grep open (Check MySQL service running)
-nmap -T4 -A -v www.moviescope.com  {Aggressive scan}
+
+
+
+nmap -sn x.x.x.0/24 -iL ips.txt {No of hosts up}
 
 ```
 </details> 
