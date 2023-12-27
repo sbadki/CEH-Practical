@@ -24,6 +24,8 @@ nmap -O x.x.x.x                 {To find the OS}
 nmap -Pn -A x.x.x.1/24 -vv --open {Comprehensive Scan}
 nmap -p 3389 -iL ip.txt | grep open (Check RDP enabled after getting ip)
 nmap -p 3306 -iL ip.txt | grep open (Check MySQL service running)
+nmap -T4 -A -v www.moviescope.com  {Aggressive scan}
+
 ```
 </details> 
 
