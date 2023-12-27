@@ -1,5 +1,41 @@
 # Web Application hacking
 
+<details>
+	<summary>Banner grabbing</summary>
+	
+	```console
+ 	   nmap -T4 -A -v [Target Web Application] 
+     	   OR
+	   telnet www.moviescope.com 80
+	   GET / HTTP/1.0
+	```
+</details>
+
+<details>
+	<summary>Reconinanace using whatweb</summary>
+	
+	```console
+	  whatweb -v [Target] 
+	  whatweb --log-verbose=Report www.moviescope.com
+	```
+</details>
+
+<details>
+<summary>Web Server Directories</summary>
+	
+```console
+ nmap -sV --script=http-enum
+ look under http-enum
+ Find dirs
+ gobuster dir -u [Target Website] -w /home/attacker/Desktop/common.txt
+
+ OR
+ python3 dirsearch.py -u [Target]
+ python3 dirsearch.py -u http://www.moviescope.com -e aspx   {spec extn}
+ python3 dirsearch.py -u http://www.moviescope.com -x 403    {dir bruteforce excluding port 403}
+
+``` 
+</details>
 <details><summary>Hack a Web Application using WPScan and Metasploit</summary>
 
 ```console
